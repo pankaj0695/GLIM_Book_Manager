@@ -75,6 +75,17 @@ export function PlusIcon(props: IconProps) {
   );
 }
 
+export function StarIcon({ filled, ...props }: IconProps & { filled?: boolean }) {
+  return (
+    <Icon {...props}>
+      <path
+        d="m12 2.5 2.9 6.2 6.8.9-5 4.7 1.3 6.7-6-3.3-6 3.3 1.3-6.7-5-4.7 6.8-.9z"
+        fill={filled ? "currentColor" : "none"}
+      />
+    </Icon>
+  );
+}
+
 export const STATUS_ICONS: Record<
   BookStatus,
   (props: IconProps) => React.ReactElement

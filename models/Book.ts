@@ -10,6 +10,7 @@ export interface BookDocument extends mongoose.Document {
   author: string;
   tags: string[];
   status: BookStatus;
+  rating: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -46,6 +47,12 @@ const bookSchema = new Schema<BookDocument>(
       type: String,
       enum: BOOK_STATUSES,
       default: "want-to-read",
+    },
+    rating: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0,
     },
   },
   { timestamps: true }

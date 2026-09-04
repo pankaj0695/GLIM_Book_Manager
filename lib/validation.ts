@@ -9,6 +9,7 @@ export type BookInput = {
   author: string;
   tags: string[];
   status: BookStatus;
+  rating?: number;
 };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -19,6 +20,15 @@ function asString(value: unknown) {
 
 export function isBookStatus(value: unknown): value is BookStatus {
   return BOOK_STATUSES.includes(value as BookStatus);
+}
+
+export function isValidRating(value: unknown): value is number {
+  return (
+    typeof value === "number" &&
+    Number.isInteger(value) &&
+    value >= 0 &&
+    value <= 5
+  );
 }
 
 export function normalizeTags(value: unknown): string[] {
@@ -79,9 +89,17 @@ export function validateBook(body: unknown): ValidationResult<BookInput> {
   if (author.length > 120) return { ok: false, error: "Author must be under 120 characters" };
   if (!isBookStatus(status)) return { ok: false, error: "Invalid reading status" };
 
+  let rating = 0;
+  if ("rating" in input && input.rating !== undefined && input.rating !== null) {
+    if (!isValidRating(input.rating)) {
+      return { ok: false, error: "Rating must be an integer between 0 and 5" };
+    }
+    rating = input.rating;
+  }
+
   return {
     ok: true,
-    data: { title, author, status, tags: normalizeTags(input.tags) },
+    data: { title, author, status, rating, tags: normalizeTags(input.tags) },
   };
 }
 
@@ -110,6 +128,13 @@ export function validateBookPatch(body: unknown): ValidationResult<Partial<BookI
 
   if ("tags" in input) {
     patch.tags = normalizeTags(input.tags);
+  }
+
+  if ("rating" in input) {
+    if (!isValidRating(input.rating)) {
+      return { ok: false, error: "Rating must be an integer between 0 and 5" };
+    }
+    patch.rating = input.rating;
   }
 
   if (Object.keys(patch).length === 0) {

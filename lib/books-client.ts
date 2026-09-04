@@ -5,6 +5,7 @@ export type BookPayload = {
   author: string;
   tags: string[];
   status: BookStatus;
+  rating?: number;
 };
 
 async function request<T>(url: string, init?: RequestInit): Promise<T> {
