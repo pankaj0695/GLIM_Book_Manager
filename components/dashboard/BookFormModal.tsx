@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { StarIcon } from "@/components/icons";
 import { Button } from "@/components/ui/Button";
 import { Input, Select } from "@/components/ui/Field";
 import { Modal } from "@/components/ui/Modal";
+import { cn } from "@/lib/cn";
 import { STATUS_META, STATUS_ORDER } from "@/lib/status";
 import type { BookPayload } from "@/lib/books-client";
 import type { Book, BookStatus } from "@/types";
@@ -20,11 +22,13 @@ function initialValues(book: Book | null) {
     author: book?.author ?? "",
     tags: book?.tags.join(", ") ?? "",
     status: book?.status ?? ("want-to-read" as BookStatus),
+    rating: book?.rating ?? 0,
   };
 }
 
 export function BookFormModal({ book, onClose, onSubmit }: BookFormModalProps) {
   const [values, setValues] = useState(() => initialValues(book));
+  const [hoverRating, setHoverRating] = useState<number | null>(null);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
 
@@ -38,6 +42,7 @@ export function BookFormModal({ book, onClose, onSubmit }: BookFormModalProps) {
         title: values.title.trim(),
         author: values.author.trim(),
         status: values.status,
+        rating: values.rating,
         tags: values.tags
           .split(",")
           .map((tag) => tag.trim().toLowerCase())
@@ -51,6 +56,8 @@ export function BookFormModal({ book, onClose, onSubmit }: BookFormModalProps) {
       setSaving(false);
     }
   }
+
+  const activeRating = hoverRating !== null ? hoverRating : values.rating;
 
   return (
     <Modal
@@ -101,6 +108,63 @@ export function BookFormModal({ book, onClose, onSubmit }: BookFormModalProps) {
             </option>
           ))}
         </Select>
+
+        <div className="space-y-1.5">
+          <label className="block text-xs font-extrabold uppercase tracking-wider">
+            Rating
+          </label>
+          <div className="flex flex-wrap items-center gap-2">
+            <div
+              role="radiogroup"
+              aria-label="Rating"
+              className="brut flex overflow-hidden bg-paper"
+              onMouseLeave={() => setHoverRating(null)}
+            >
+              {[1, 2, 3, 4, 5].map((star, index) => {
+                const filled = star <= activeRating;
+                const isSelected = values.rating === star;
+
+                return (
+                  <button
+                    key={star}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    aria-label={`${star} star${star > 1 ? "s" : ""}`}
+                    onClick={() =>
+                      setValues((prev) => ({
+                        ...prev,
+                        rating: prev.rating === star ? 0 : star,
+                      }))
+                    }
+                    onMouseEnter={() => setHoverRating(star)}
+                    className={cn(
+                      "flex items-center justify-center p-2.5 transition-colors duration-150 focus:outline-none",
+                      index > 0 && "border-l-3 border-ink",
+                      filled
+                        ? "bg-primary text-ink"
+                        : "bg-paper text-ink/40 hover:bg-surface hover:text-ink"
+                    )}
+                  >
+                    <StarIcon filled={filled} className="size-5" />
+                  </button>
+                );
+              })}
+            </div>
+
+            {values.rating > 0 ? (
+              <button
+                type="button"
+                onClick={() => setValues((prev) => ({ ...prev, rating: 0 }))}
+                className="brut press bg-surface px-2.5 py-1.5 text-xs font-bold text-ink/70 hover:text-ink"
+              >
+                Clear rating
+              </button>
+            ) : (
+              <span className="text-xs font-medium text-ink/50">Unrated</span>
+            )}
+          </div>
+        </div>
 
         {error && (
           <p

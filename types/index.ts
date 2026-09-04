@@ -8,6 +8,7 @@ export type Book = {
   author: string;
   tags: string[];
   status: BookStatus;
+  rating: number;
   createdAt: string;
   updatedAt: string;
 };
@@ -18,4 +19,4 @@ export type SessionUser = {
   email: string;
 };
 
-export type SortKey = "recent" | "title" | "author";
+export type SortKey = "recent" | "rating" | "title" | "author";

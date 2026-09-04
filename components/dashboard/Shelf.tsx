@@ -19,6 +19,7 @@ import type { Book, BookStatus, SortKey } from "@/types";
 
 const SORTERS: Record<SortKey, (a: Book, b: Book) => number> = {
   recent: (a, b) => b.createdAt.localeCompare(a.createdAt),
+  rating: (a, b) => b.rating - a.rating || b.createdAt.localeCompare(a.createdAt),
   title: (a, b) => a.title.localeCompare(b.title),
   author: (a, b) => a.author.localeCompare(b.author),
 };

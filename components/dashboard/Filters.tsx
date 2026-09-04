@@ -21,6 +21,7 @@ type FiltersProps = {
 
 const SORT_LABELS: Record<SortKey, string> = {
   recent: "Newest",
+  rating: "Highest rated",
   title: "Title A–Z",
   author: "Author A–Z",
 };

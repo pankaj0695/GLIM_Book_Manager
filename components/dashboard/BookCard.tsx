@@ -1,6 +1,6 @@
 "use client";
 
-import { STATUS_ICONS } from "@/components/icons";
+import { STATUS_ICONS, StarIcon } from "@/components/icons";
 import { cn } from "@/lib/cn";
 import { STATUS_META, STATUS_ORDER } from "@/lib/status";
 import type { Book, BookStatus } from "@/types";
@@ -53,6 +53,29 @@ export function BookCard({
             {meta.label}
           </span>
         </div>
+
+        {book.rating > 0 && (
+          <div
+            className="inline-flex items-center gap-1 text-primary"
+            aria-label={`Rating: ${book.rating} out of 5 stars`}
+          >
+            <div className="flex items-center gap-0.5">
+              {[1, 2, 3, 4, 5].map((star) => (
+                <StarIcon
+                  key={star}
+                  filled={star <= book.rating}
+                  className={cn(
+                    "size-4",
+                    star <= book.rating ? "text-primary fill-primary" : "text-ink/20"
+                  )}
+                />
+              ))}
+            </div>
+            <span className="text-xs font-bold text-ink/70 font-mono">
+              {book.rating}/5
+            </span>
+          </div>
+        )}
 
         {book.tags.length > 0 && (
           <ul className="flex flex-wrap gap-1.5">

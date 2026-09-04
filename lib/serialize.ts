@@ -6,6 +6,7 @@ type BookLike = {
   author: string;
   tags?: string[];
   status: Book["status"];
+  rating?: number;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -17,6 +18,7 @@ export function serializeBook(book: BookLike): Book {
     author: book.author,
     tags: book.tags ?? [],
     status: book.status,
+    rating: book.rating ?? 0,
     createdAt: book.createdAt.toISOString(),
     updatedAt: book.updatedAt.toISOString(),
   };
